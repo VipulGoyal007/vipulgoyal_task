@@ -1,0 +1,65 @@
+package com.example.vipulgoyaltask.presentation.viewmodel
+
+import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.demoassignment.common.Status
+import com.example.vipulgoyaltask.domain.model.PortfolioCalculatedData
+import com.example.vipulgoyaltask.domain.model.PortfolioData
+import com.example.vipulgoyaltask.domain.usecase.CalculatePortfolioValuesUseCase
+import com.example.vipulgoyaltask.domain.usecase.GetPortfolioUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+@HiltViewModel
+class MainViewModel @Inject constructor(
+    private val calculatePortfolioValuesUseCase: CalculatePortfolioValuesUseCase,
+    private val getPortfolioUseCase: GetPortfolioUseCase
+) : ViewModel() {
+
+    private val _summary = MutableLiveData<PortfolioCalculatedData>()
+    val summary: LiveData<PortfolioCalculatedData> = _summary
+    lateinit var portfolioCalculatedData: PortfolioCalculatedData
+
+
+    private val _getPortfolioList = MutableStateFlow(listOf<PortfolioData>())
+    val getPortfolioList = _getPortfolioList.asStateFlow()
+    private val _showLoader = MutableStateFlow(false)
+    val showLoader = _showLoader.asStateFlow()
+    private val _errorData = MutableStateFlow("")
+    val errorData = _errorData.asStateFlow()
+
+
+    fun fetchPortfolioList() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _showLoader.value = true
+            getPortfolioUseCase().collect{
+                when (it.status) {
+                    Status.LOADING -> {
+                        _showLoader.value = true
+                    }
+
+                    Status.SUCCESS -> {
+                        _showLoader.value = false
+                        it.data?.let {
+                            portfolioCalculatedData=calculatePortfolioValuesUseCase.calculatePortfolioValues(it)
+                            _getPortfolioList.value = it
+                        }
+                    }
+
+                    Status.ERROR -> {
+                        Log.e("data_error::",it.message.toString())
+                        _showLoader.value = false
+                        _errorData.value=it.message?:""
+                    }
+                }
+            }
+        }
+    }
+}
