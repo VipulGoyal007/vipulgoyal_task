@@ -8,14 +8,14 @@
 
 ## Tech Stack
 
--    **Kotlin:** Primary programming language.
-    **Jetpack Libraries:**
-            *   ViewModel: For MVVM architecture.
-            *   Flow: For reactive data streams.
-            *   Room: For local database/offline storage.
-            *   Retrofit: For network requests.
-        *   **Coroutines:** For asynchronous programming.
-        *   **Dagger/Hilt:** For DI 
+- **Kotlin:** Primary programming language.
+- **Jetpack Libraries:**
+   - **ViewModel**: For MVVM architecture.
+   - **Flow**: For reactive data streams.
+   - **Room**: For local database/offline storage.
+   - **Retrofit**: For network requests.
+- **Coroutines:** For asynchronous programming.
+- **Dagger/Hilt:** For DI
 
 
 ## Screenshots
