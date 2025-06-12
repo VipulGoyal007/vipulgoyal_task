@@ -1,7 +1,5 @@
 package com.example.vipulgoyaltask.presentation.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.vipulgoyaltask.core.Resource
@@ -13,6 +11,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,42 +22,27 @@ class MainViewModel @Inject constructor(
     private val getPortfolioUseCase: GetPortfolioUseCase
 ) : ViewModel() {
 
-    private val _summary = MutableLiveData<PortfolioCalculatedData>()
-    val summary: LiveData<PortfolioCalculatedData> = _summary
-    lateinit var portfolioCalculatedData: PortfolioCalculatedData
+    private val _portfolioList = MutableStateFlow<Resource<List<PortfolioData>>>(Resource.Loading())
+    val portfolioList get() = _portfolioList.asStateFlow()
+
+    private val _portfolioCalculatedData = MutableStateFlow(PortfolioCalculatedData(0.0, 0.0, 0.0, 0.0))
+    val portfolioCalculatedData = _portfolioCalculatedData.asStateFlow()
 
 
-    private val _getPortfolioList = MutableStateFlow(listOf<PortfolioData>())
-    val getPortfolioList = _getPortfolioList.asStateFlow()
-    private val _showLoader = MutableStateFlow(false)
-    val showLoader = _showLoader.asStateFlow()
-    private val _errorData = MutableStateFlow("")
-    val errorData = _errorData.asStateFlow()
+    fun fetchPortfolioList() = viewModelScope.launch(Dispatchers.IO) {
+        getPortfolioUseCase().onStart {
+            _portfolioList.emit(Resource.Loading())
+        }.catch {
+            _portfolioList.emit(Resource.Error(message =it.message.orEmpty()))
+        }.collect {
+            if(it.isEmpty()){
+                _portfolioList.emit(Resource.Error(message = "No Data Found"))
 
+            }else{
+                _portfolioCalculatedData.value=calculatePortfolioValuesUseCase.calculatePortfolioValues(it)
+                _portfolioList.emit(Resource.Success(it))
 
-    fun fetchPortfolioList() {
-        viewModelScope.launch(Dispatchers.IO) {
-            _showLoader.value = true
-            getPortfolioUseCase().collect{
-                when (it) {
-                    is Resource.Loading -> {
-                        _showLoader.value = true
-                    }
-
-                    is Resource.Success -> {
-                        _showLoader.value = false
-                        if(it.data.isNotEmpty()){
-                            portfolioCalculatedData=calculatePortfolioValuesUseCase.calculatePortfolioValues(it.data)
-                            _getPortfolioList.value = it.data}
-
-                    }
-
-                    is Resource.Error -> {
-                        _showLoader.value = false
-                        _errorData.value=it.message?:""
-                    }
-                }
             }
-        }
+         }
     }
 }
