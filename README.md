@@ -3,7 +3,7 @@
 
 ## Description
 
-1. This project display the portfolio list online and offline
+1. This project displays the portfolio list online and offline
 2. Architecture used: MVVM with clean
 - **Model-View-ViewModel (MVVM)**
     - **Model**: Represents the data layer, including repositories, data sources, and business logic.
