@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.vipulgoyaltask.core.Status
+import com.example.vipulgoyaltask.core.Resource
 import com.example.vipulgoyaltask.domain.model.PortfolioCalculatedData
 import com.example.vipulgoyaltask.domain.model.PortfolioData
 import com.example.vipulgoyaltask.domain.usecase.CalculatePortfolioValuesUseCase
@@ -39,20 +39,20 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             _showLoader.value = true
             getPortfolioUseCase().collect{
-                when (it.status) {
-                    Status.LOADING -> {
+                when (it) {
+                    is Resource.Loading -> {
                         _showLoader.value = true
                     }
 
-                    Status.SUCCESS -> {
+                    is Resource.Success -> {
                         _showLoader.value = false
-                        it.data?.let {
-                            portfolioCalculatedData=calculatePortfolioValuesUseCase.calculatePortfolioValues(it)
-                            _getPortfolioList.value = it
-                        }
+                        if(it.data.isNotEmpty()){
+                            portfolioCalculatedData=calculatePortfolioValuesUseCase.calculatePortfolioValues(it.data)
+                            _getPortfolioList.value = it.data}
+
                     }
 
-                    Status.ERROR -> {
+                    is Resource.Error -> {
                         _showLoader.value = false
                         _errorData.value=it.message?:""
                     }

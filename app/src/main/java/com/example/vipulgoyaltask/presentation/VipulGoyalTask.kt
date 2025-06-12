@@ -3,4 +3,4 @@ import android.app.Application
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
-class VipulGoyalTest : Application()
+class VipulGoyalTask : Application()

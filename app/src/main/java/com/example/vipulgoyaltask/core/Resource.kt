@@ -1,14 +1,7 @@
 package com.example.vipulgoyaltask.core
 
-
-sealed class Resource<T>(
-    val status: Status,
-    val data: T? = null,
-    var message: String? = null,
-    var errorCode: Int?
-) {
-    class Loading<T>(data: T? = null) : Resource<T>(status = Status.LOADING, data, errorCode = 0)
-    class Success<T>(data: T) : Resource<T>(status = Status.SUCCESS, data, errorCode = 0)
-    class Error<T>(message: String, data: T? = null, errorCode: Int?) :
-        Resource<T>(status = Status.ERROR, data, message, errorCode)
+sealed class Resource<T> {
+    data class Success<T>(val data: T) : Resource<T>()
+    data class Error<T>(val message: String, val data: T? = null, val errorCode: Int? = null) : Resource<T>()
+    data class Loading<T>(val data: T? = null) : Resource<T>()
 }

@@ -61,8 +61,13 @@ class MainActivity : AppCompatActivity() {
                 viewModel.errorData.collect {value->
                     if(value.isNotEmpty()){
                         mBinding.tvNoRecordFound.isVisible= true
-                        if(!NetworkUtil(this@MainActivity).getConnectivityStatus())
-                        Toast.makeText(this@MainActivity,getString(R.string.please_check_your_internet_connection),Toast.LENGTH_LONG).show()
+                        if (!NetworkUtil(this@MainActivity).getConnectivityStatus()) {
+                            Toast.makeText(
+                                this@MainActivity,
+                                getString(R.string.please_check_your_internet_connection),
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
                 }}
             }
         }
