@@ -15,7 +15,7 @@
             *   Room: For local database/offline storage.
             *   Retrofit: For network requests.
         *   **Coroutines:** For asynchronous programming.
-        *   **Dagger/Hilt:** For DI **
+        *   **Dagger/Hilt:** For DI 
 
 
 ## Screenshots
