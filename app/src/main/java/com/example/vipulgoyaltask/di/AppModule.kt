@@ -17,6 +17,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 import com.example.vipulgoyaltask.BuildConfig
+import com.example.vipulgoyaltask.core.NetworkUtil
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -43,8 +44,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providePortfolioRepository(api: PortfolioApi,dao: PortfolioDao): PortfolioRepository {
-        return PortfolioRepositoryImpl(api,dao)
+    fun providePortfolioRepository(api: PortfolioApi,dao: PortfolioDao,networkUtil: NetworkUtil): PortfolioRepository {
+        return PortfolioRepositoryImpl(api,dao,networkUtil)
     }
 
     @Provides
@@ -53,7 +54,7 @@ object AppModule {
         return Room.databaseBuilder(
             context,
             AppDatabase::class.java,
-            "holdings_db"
+            BuildConfig.DB_NAME
         ).build()
     }
 }

@@ -1,7 +1,6 @@
 package com.example.vipulgoyaltask.domain.usecase
 
-
-import com.example.demoassignment.common.Resource
+import com.example.vipulgoyaltask.core.Resource
 import javax.inject.Inject
 import com.example.vipulgoyaltask.domain.model.PortfolioData
 import com.example.vipulgoyaltask.domain.repository.PortfolioRepository

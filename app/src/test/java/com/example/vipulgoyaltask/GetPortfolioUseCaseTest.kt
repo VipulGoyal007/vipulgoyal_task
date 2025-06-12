@@ -1,6 +1,6 @@
 package com.example.vipulgoyaltask
 
-import com.example.demoassignment.common.Resource
+import com.example.vipulgoyaltask.core.Resource
 import com.example.vipulgoyaltask.domain.model.PortfolioData
 import com.example.vipulgoyaltask.domain.repository.PortfolioRepository
 import com.example.vipulgoyaltask.domain.usecase.GetPortfolioUseCase

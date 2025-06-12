@@ -1,11 +1,10 @@
 package com.example.vipulgoyaltask.presentation.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.demoassignment.common.Status
+import com.example.vipulgoyaltask.core.Status
 import com.example.vipulgoyaltask.domain.model.PortfolioCalculatedData
 import com.example.vipulgoyaltask.domain.model.PortfolioData
 import com.example.vipulgoyaltask.domain.usecase.CalculatePortfolioValuesUseCase
@@ -54,7 +53,6 @@ class MainViewModel @Inject constructor(
                     }
 
                     Status.ERROR -> {
-                        Log.e("data_error::",it.message.toString())
                         _showLoader.value = false
                         _errorData.value=it.message?:""
                     }

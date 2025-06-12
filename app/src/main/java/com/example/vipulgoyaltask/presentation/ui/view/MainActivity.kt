@@ -3,7 +3,6 @@ package com.example.vipulgoyaltask.presentation.ui.view
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -12,8 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.vipulgoyaltask.R
-import com.example.vipulgoyaltask.common.NetworkUtil
-import com.example.vipulgoyaltask.data.local.Constants
+import com.example.vipulgoyaltask.core.NetworkUtil
 import com.example.vipulgoyaltask.databinding.ActivityMainBinding
 import com.example.vipulgoyaltask.presentation.ui.adapter.PortfolioListAdapter
 import com.example.vipulgoyaltask.presentation.viewmodel.MainViewModel
@@ -38,11 +36,7 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.showLoader.collect {value->
-                    if(value)
-                        mBinding.progressBar.visibility= View.VISIBLE
-                    else
-                        mBinding.progressBar.visibility= View.GONE
-
+                    mBinding.progressBar.isVisible = value
                 }
             }
         }
@@ -51,17 +45,13 @@ class MainActivity : AppCompatActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.getPortfolioList.collect {value->
                     if(value.isNotEmpty()) {
-                        mBinding.tvNoRecordFound.visibility= View.GONE
-                        mBinding.rvPortfolioList.visibility = View.VISIBLE
+                        mBinding.tvNoRecordFound.isVisible= false
+                        mBinding.rvPortfolioList.isVisible = true
                         mBinding.rvPortfolioList.layoutManager = LinearLayoutManager(this@MainActivity)
                         adapter = PortfolioListAdapter(value)
                         mBinding.rvPortfolioList.adapter = adapter
                         setPortFolioSummaryData()
                     }
-                    else{
-                        mBinding.tvNoRecordFound.visibility= View.VISIBLE
-                    }
-
                 }
             }
         }
@@ -69,9 +59,11 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.errorData.collect {value->
-                    if(value.isNotEmpty() && !NetworkUtil(this@MainActivity).getConnectivityStatus())
+                    if(value.isNotEmpty()){
+                        mBinding.tvNoRecordFound.isVisible= true
+                        if(!NetworkUtil(this@MainActivity).getConnectivityStatus())
                         Toast.makeText(this@MainActivity,getString(R.string.please_check_your_internet_connection),Toast.LENGTH_LONG).show()
-                }
+                }}
             }
         }
     }

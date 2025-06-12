@@ -1,8 +1,7 @@
 package com.example.vipulgoyaltask.data.repository
 
-import android.util.Log
+import com.example.vipulgoyaltask.core.NetworkUtil
 import com.example.vipulgoyaltask.data.api.PortfolioApi
-import com.example.vipulgoyaltask.data.local.Constants
 import com.example.vipulgoyaltask.data.local.dao.PortfolioDao
 import com.example.vipulgoyaltask.data.local.entity.mapToPortfolioData
 import com.example.vipulgoyaltask.domain.model.PortfolioData
@@ -13,24 +12,29 @@ import javax.inject.Inject
 
 class PortfolioRepositoryImpl @Inject constructor(
     private val portfolioApi: PortfolioApi,
-    private val portfolioDao: PortfolioDao
+    private val portfolioDao: PortfolioDao,
+   private val networkUtil:NetworkUtil
 ) : PortfolioRepository {
 
     override suspend fun getPortfolioList(): List<PortfolioData> {
+        if (!networkUtil.getConnectivityStatus()) {
+            return  getPortfolioFromDb()
+        }
         return try {
             val apiResponce = portfolioApi.getPortfolioList().data
             val dbInsertRequestData = apiResponce.mapToPortfolioEntity()
-            Log.d("case1:::", "yess")
+
             /*Upsert data into local db*/
             portfolioDao.insertPortfolioListToDb(dbInsertRequestData)
             dbInsertRequestData.map { it.mapToPortfolioData() }
 
         } catch (e: Exception) {
-            e.printStackTrace()
-            withContext(Dispatchers.IO) {
-                portfolioDao.getPortfolioListFromDb().map { it.mapToPortfolioData() }
-            }
+            getPortfolioFromDb()
         }
+    }
+
+    private suspend fun getPortfolioFromDb(): List<PortfolioData> = withContext(Dispatchers.IO) {
+        portfolioDao.getPortfolioListFromDb().map { it.mapToPortfolioData() }
     }
 
 }

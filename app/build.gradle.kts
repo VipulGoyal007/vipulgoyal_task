@@ -17,6 +17,8 @@ android {
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "BASE_URL", "\"https://35dee773a9ec441e9f38d5fc249406ce.api.mockbin.io/\"")
+        buildConfigField("String", "DB_NAME", "\"portfolio_db\"")
+
     }
 
     buildFeatures {

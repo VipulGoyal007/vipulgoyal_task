@@ -1,4 +1,4 @@
-package com.example.demoassignment.common
+package com.example.vipulgoyaltask.core
 
 enum class Status {
     SUCCESS,

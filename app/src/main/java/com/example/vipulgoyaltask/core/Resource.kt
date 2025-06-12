@@ -1,4 +1,4 @@
-package com.example.demoassignment.common
+package com.example.vipulgoyaltask.core
 
 
 sealed class Resource<T>(
