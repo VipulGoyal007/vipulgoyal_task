@@ -21,7 +21,7 @@ Screen shots:
 
 ![portfolio_list.webp](screenshots/portfolio_list.webp)
 
-![portfolio_data_calculated.webp](screenShots/portfolio_data_calculated.webp)
+![portfolio_data_calculated.webp](screenshots/portfolio_data_calculated.webp)
 
 
 
